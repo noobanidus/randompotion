@@ -1,10 +1,8 @@
-package mysticmods.mysticalworld.loot.functions;
+package noobanidus.mods.randompotion.loot.functions;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import mysticmods.mysticalworld.MWTags;
-import mysticmods.mysticalworld.init.ModLoot;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -16,6 +14,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.tags.ITag;
 import net.minecraftforge.registries.ForgeRegistries;
+import noobanidus.mods.randompotion.RPTags;
+import noobanidus.mods.randompotion.init.ModLoot;
 
 import java.util.List;
 import java.util.Random;
@@ -31,7 +31,7 @@ public class RandomPotion extends LootFunction {
   }
 
   protected ITag.INamedTag<Potion> getIgnoreTag() {
-    return MWTags.Potions.RANDOM_BLACKLIST;
+    return RPTags.Potions.RANDOM_BLACKLIST;
   }
 
   public ItemStack doApply(ItemStack stack, LootContext context) {
