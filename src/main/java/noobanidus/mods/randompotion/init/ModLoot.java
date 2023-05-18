@@ -1,16 +1,19 @@
 package noobanidus.mods.randompotion.init;
 
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.util.registry.Registry;
-import noobanidus.libs.noobutil.registry.ConfiguredRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import noobanidus.mods.randompotion.RandomPotions;
-import noobanidus.mods.randompotion.loot.functions.RandomPotion;
+import noobanidus.mods.randompotion.loot.functions.RandomPotionFunction;
 
 public class ModLoot {
-  public static final ConfiguredRegistry<LootFunctionType> FUNCTION_REGISTRY = new ConfiguredRegistry<>(RandomPotions.MODID, Registry.LOOT_FUNCTION_TYPE);
+  private static final DeferredRegister<LootItemFunctionType> FUNCTIONS = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, RandomPotions.MODID);
 
-  public static final LootFunctionType RANDOM_POTION = FUNCTION_REGISTRY.register("random_potion", new LootFunctionType(new RandomPotion.Serializer()));
+  public static final RegistryObject<LootItemFunctionType> RANDOM_POTION = FUNCTIONS.register("random_potion", () -> new LootItemFunctionType(new RandomPotionFunction.Serializer()));
 
-  public static void load() {
+  public static void registration(IEventBus bus) {
+    FUNCTIONS.register(bus);
   }
 }
