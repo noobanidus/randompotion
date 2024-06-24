@@ -1,18 +1,17 @@
 package noobanidus.mods.randompotion;
 
-import net.minecraft.potion.Potion;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeTagHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.alchemy.Potion;
 
 public class RPTags {
 
   public static class Potions extends RPTags {
-    public static ITag.INamedTag<Potion> RANDOM_BLACKLIST = compatTag("random_potion_blacklist");
+    public static TagKey<Potion> RANDOM_BLACKLIST = compatTag("random_potion_blacklist");
 
-    static ITag.INamedTag<Potion> compatTag(String name) {
-      return ForgeTagHandler.createOptionalTag(ForgeRegistries.POTION_TYPES, new ResourceLocation("forge", name));
+    static TagKey<Potion> compatTag(String name) {
+      return TagKey.create(Registries.POTION, new ResourceLocation("forge", name));
     }
   }
 }
