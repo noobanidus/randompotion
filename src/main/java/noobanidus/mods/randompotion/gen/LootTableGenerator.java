@@ -1,8 +1,11 @@
 package noobanidus.mods.randompotion.gen;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -16,18 +19,19 @@ import noobanidus.mods.randompotion.loot.functions.RandomPotionFunction;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class LootTableGenerator {
-  public static ResourceLocation TEST_TABLE = new ResourceLocation(RandomPotions.MODID, "test_loot_table");
+  public static ResourceKey<LootTable> TEST_TABLE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(RandomPotions.MODID, "test_loot_table"));
 
-  public static LootTableProvider create(PackOutput output) {
-    return new LootTableProvider(output, Set.of(TEST_TABLE), List.of(new LootTableProvider.SubProviderEntry(TestLootTable::new, LootContextParamSets.CHEST)));
+  public static LootTableProvider create(CompletableFuture<HolderLookup.Provider> provider, PackOutput output) {
+    return new LootTableProvider(output, Set.of(TEST_TABLE), List.of(new LootTableProvider.SubProviderEntry((o) -> new TestLootTable(), LootContextParamSets.CHEST)), provider);
   }
 
   public static class TestLootTable implements LootTableSubProvider {
     @Override
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> sink) {
+    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> sink) {
       sink.accept(
           TEST_TABLE,
           LootTable.lootTable()

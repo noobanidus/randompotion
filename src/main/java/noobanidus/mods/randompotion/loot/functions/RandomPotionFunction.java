@@ -1,14 +1,12 @@
 package noobanidus.mods.randompotion.loot.functions;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import net.minecraft.core.HolderSet;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
@@ -20,28 +18,31 @@ import noobanidus.mods.randompotion.init.ModLoot;
 import java.util.List;
 
 public class RandomPotionFunction extends LootItemConditionalFunction {
+  public static final MapCodec<RandomPotionFunction> CODEC = RecordCodecBuilder.mapCodec(
+      p_344674_ -> commonFields(p_344674_)
+          .apply(p_344674_, RandomPotionFunction::new)
+  );
 
-  protected RandomPotionFunction(LootItemCondition[] p_80678_) {
-    super(p_80678_);
+  protected RandomPotionFunction(List<LootItemCondition> conditions) {
+    super(conditions);
   }
 
   public ItemStack run(ItemStack stack, LootContext context) {
     RandomSource random = context.getRandom();
 
-    HolderSet.Named<Potion> holders = BuiltInRegistries.POTION.getTag(RPTags.Potions.RANDOM_BLACKLIST).orElseThrow();
-    List<Potion> potions = BuiltInRegistries.POTION.stream().filter(o -> !holders.contains(BuiltInRegistries.POTION.getHolder(BuiltInRegistries.POTION.getResourceKey(o).orElseThrow()).orElseThrow())).toList();
+    var potions = BuiltInRegistries.POTION.holders().filter(o -> !o.is(RPTags.Potions.RANDOM_BLACKLIST)).toList();
     if (potions.isEmpty()) {
       RandomPotions.LOG.error("Unable to find a random potion suitable for '" + stack + "': all available potions appear to be blacklisted.");
       return stack;
     }
 
-    Potion potion = potions.get(random.nextInt(potions.size()));
-    PotionUtils.setPotion(stack, potion);
+    var potion = potions.get(random.nextInt(potions.size()));
+    stack.update(DataComponents.POTION_CONTENTS, PotionContents.EMPTY, potion, PotionContents::withPotion);
     return stack;
   }
 
   @Override
-  public LootItemFunctionType getType() {
+  public LootItemFunctionType<RandomPotionFunction> getType() {
     return ModLoot.RANDOM_POTION.get();
   }
 
@@ -63,18 +64,6 @@ public class RandomPotionFunction extends LootItemConditionalFunction {
     @Override
     public LootItemConditionalFunction build() {
       return new RandomPotionFunction(getConditions());
-    }
-  }
-
-  public static class Serializer extends LootItemConditionalFunction.Serializer<RandomPotionFunction> {
-    @Override
-    public void serialize(JsonObject json, RandomPotionFunction function, JsonSerializationContext context) {
-      super.serialize(json, function, context);
-    }
-
-    @Override
-    public RandomPotionFunction deserialize(JsonObject json, JsonDeserializationContext context, LootItemCondition[] conditions) {
-      return new RandomPotionFunction(conditions);
     }
   }
 }
