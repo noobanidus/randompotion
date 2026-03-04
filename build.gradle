@@ -241,7 +241,7 @@ publishMods {
     modLoaders.add("neoforge")
     curseforge ("curseforge-neoforge") {
         displayName = "randompatches-neoforge-${minecraft_version}-${mod_version}"
-        projectId = "randompotion"
+        projectId = "random-potion"
         projectSlug = "${curse_slug}"
         accessToken = "${curse_auth}"
         minecraftVersions.add("1.21.1")

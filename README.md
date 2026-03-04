@@ -6,7 +6,7 @@ You can blacklist specific potion types by adding them to the `c:random_potion_b
 
 # Example
 
-Here is an example for 1.20:
+Here is an example for 1.21:
 
 ```json
 {
